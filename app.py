@@ -24,6 +24,10 @@ def shutdown_session(exception=None):
 def not_found(request):
     return "Page not found", 404
 
+@app.route('/')
+def home():
+    return "That's the root of a Todos RESTful app server", 200
+
 @app.route('/api/login', methods=['POST'])
 def login_action():
     error = None
