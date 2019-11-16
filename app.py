@@ -14,7 +14,7 @@ CORS(app)
 
 init_db()
 if __name__ == '__main__':
-    app.run('localhost', 5000, debug=True)
+    app.run('localhost', 80, debug=True)
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
