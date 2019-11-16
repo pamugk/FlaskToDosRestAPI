@@ -81,6 +81,8 @@ def get_tasks():
 
 @app.route('/api/tasks', methods=['POST'])
 def create_task():
+    if 'token' not in request.args:
+        return 'Buzz off', 401
     user = User.verify_auth_token(request.args['token'])
     if not user:
         return 'Buzz off', 401
@@ -96,6 +98,8 @@ def create_task():
 
 @app.route('/api/tasks/<id>', methods=['GET'])
 def get_task(id):
+    if 'token' not in request.args:
+        return 'Buzz off', 401
     user = User.verify_auth_token(request.args['token'])
     if not user:
         return 'Buzz off', 401
@@ -116,6 +120,8 @@ def get_task(id):
 
 @app.route('/api/tasks/<id>', methods=['PUT'])
 def task_update(id):
+    if 'token' not in request.args:
+        return 'Buzz off', 401
     user = User.verify_auth_token(request.args['token'])
     if not user:
         return 'Buzz off', 401
@@ -142,12 +148,14 @@ def task_update(id):
             error = "Task with this title is already exists"
             code=406
         else:
-            update_task(user.id, task[0], request.json['Title'], request.json['Description'], request.json['IsFinished'] == 'true')
+            update_task(user.id, task[0], request.json['Title'], request.json['Description'], request.json['IsFinished'])
             code=200
     return 'Success' if error is None else error, code
 
 @app.route('/api/tasks/<id>', methods=['PATCH'])
 def task_change_finished(id):
+    if 'token' not in request.args:
+        return 'Buzz off', 401
     user = User.verify_auth_token(request.args['token'])
     if not user:
         return 'Buzz off', 401
@@ -167,13 +175,15 @@ def task_change_finished(id):
         error = "WTF, you can't just go and edit task that does not belong to you :("
         code=403
     else:
-        finish_task(task[0], request.json['IsFinished'] == 'true')
+        finish_task(task[0], request.json['IsFinished'])
         success = True
         code = 200
     return 'Success' if error is None else error, code
 
 @app.route('/api/tasks/<id>', methods=['DELETE'])
 def task_remove(id):
+    if 'token' not in request.args:
+        return 'Buzz off', 401
     user = User.verify_auth_token(request.args['token'])
     if not user:
         return 'Buzz off', 401
@@ -185,5 +195,7 @@ def task_remove(id):
 
 @app.route('/api/user/me', methods=['GET'])
 def userinfo():
+    if 'token' not in request.args:
+        return 'Buzz off', 401
     user = User.verify_auth_token(request.args['token'])
     return serialize_user_info(user), 200
