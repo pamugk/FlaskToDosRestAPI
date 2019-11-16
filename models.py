@@ -1,3 +1,5 @@
+from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, 
+                            BadSignature, SignatureExpired)
 from sqlalchemy import Column, ForeignKey, UniqueConstraint, Integer, String, Text, Boolean
 from database import Base
 
@@ -13,6 +15,22 @@ class User(Base):
 
     def __repr__(self):
         return '<Пользователь %r>' % (self.login)
+    
+    def generate_auth_token(self, expiration = 600):
+        s = Serializer('6c131473-dcc5-4c44-9934-5526a9df4d02', expires_in = expiration)
+        return s.dumps({ 'id': self.id })
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer('6c131473-dcc5-4c44-9934-5526a9df4d02')
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            return None
+        except BadSignature:
+            return None
+        user = User.query.get(data['id'])
+        return user
 
 class Task(Base):
     __tablename__ = 'tasks'
@@ -31,3 +49,6 @@ class Task(Base):
 
     def __repr__(self):
         return '<Задача \'%r\'>' % (self.title)
+
+    def to_JSON(self):
+        return { "Id": self.id, "UserId": self.user_id, "Title": self.title, "Description": self.description, "IsFinished": self.finished }

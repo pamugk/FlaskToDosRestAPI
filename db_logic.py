@@ -6,6 +6,7 @@ def add_task(user_id, title, description):
     new_task = Task(user_id, title, description)
     db_session.add(new_task)
     db_session.commit()
+    return new_task.id
 
 def add_user(login, password):
     registered_user = User(login, hashify_password(password))
