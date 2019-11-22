@@ -149,7 +149,7 @@ def task_update(id):
             code=406
         else:
             update_task(user.id, task[0], request.json['Title'], request.json['Description'], request.json['IsFinished'])
-            code=200
+            code=202
     return 'Success' if error is None else error, code
 
 @app.route('/api/tasks/<id>', methods=['PATCH'])
@@ -177,7 +177,7 @@ def task_change_finished(id):
     else:
         finish_task(task[0], request.json['IsFinished'])
         success = True
-        code = 200
+        code = 202
     return 'Success' if error is None else error, code
 
 @app.route('/api/tasks/<id>', methods=['DELETE'])
@@ -188,7 +188,10 @@ def task_remove(id):
     if not user:
         return 'Buzz off', 401
 
-    if not is_users_task(user.id, id):
+    task = get_task_by_id(user.id, id)
+    if task[0] is None:
+        return "Task not found", 404
+    elif not task[1]:
         return "You've got no rights to mess with this task", 403
     remove_task(user.id, id)
     return "Success", 200
