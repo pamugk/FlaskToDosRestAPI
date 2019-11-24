@@ -47,7 +47,7 @@ def login_action():
 
     return error, 401
 
-@app.route('/api/logout')
+@app.route('/api/logout', methods=["POST"])
 def logout():
     return "OK", 200
 
