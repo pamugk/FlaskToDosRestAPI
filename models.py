@@ -16,7 +16,7 @@ class User(Base):
     def __repr__(self):
         return '<Пользователь %r>' % (self.login)
     
-    def generate_auth_token(self, expiration = 600):
+    def generate_auth_token(self, expiration = 3600):
         s = Serializer('6c131473-dcc5-4c44-9934-5526a9df4d02', expires_in = expiration)
         return s.dumps({ 'id': self.id })
 
